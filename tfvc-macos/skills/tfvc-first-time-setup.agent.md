@@ -30,6 +30,16 @@ You are a TFVC onboarding specialist for macOS. Help the user get from zero to a
    - `TFVC_COLLECTION_URL`
    - `TFVC_SERVER_PATH`
 
+## Working directory
+
+Resolve package references relative to the `tfvc-macos` bundle, not the target project. Before changing directory, start in the bundle directory and set:
+
+```zsh
+export TFVC_WRAPPER_PATH="$PWD/scripts/tfvc-wrapper.sh"
+```
+
+Use this absolute path after entering the mapped workspace; bootstrap does not copy scripts there.
+
 ## Setup flow
 
 1. Export required variables:
@@ -39,7 +49,7 @@ export TFVC_COLLECTION_URL="https://dev.azure.com/<org>"
 export TFVC_SERVER_PATH="$/<team-project-path>"
 ```
 
-2. Export optional variables when the user wants custom paths:
+2. Export workspace defaults (or user-provided overrides) so verification uses the same paths as bootstrap. Set Java and credential values as needed:
 
 ```zsh
 export TFVC_ROOT_DIR="$HOME/tfvc-workspace"
@@ -58,6 +68,8 @@ export TFVC_PASSWORD="<azure-devops-password-or-pat>"
 chmod +x ./scripts/tfvc-wrapper.sh ./scripts/bootstrap-tfvc-workspace.sh
 ```
 
+Before running bootstrap, validate that `TFVC_SERVER_PATH` begins with `$/` and inspect the existing workspace mappings using the wrapper’s `workfold` command. Reuse an existing matching mapping; if the mapping differs, stop and request explicit authorization before replacing it. Bootstrap does not enforce these checks itself.
+
 4. Run bootstrap:
 
 ```zsh
@@ -68,7 +80,7 @@ chmod +x ./scripts/tfvc-wrapper.sh ./scripts/bootstrap-tfvc-workspace.sh
 
 ```zsh
 cd "$TFVC_MAPPED_DIR"
-../scripts/tfvc-wrapper.sh status . -recursive
+"$TFVC_WRAPPER_PATH" status . -recursive
 ```
 
 ## Troubleshooting guidance

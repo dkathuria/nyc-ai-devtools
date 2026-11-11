@@ -22,6 +22,16 @@ You are a TFVC workspace provisioning specialist for macOS. Build a new workspac
 - Wrapper script: `scripts/tfvc-wrapper.sh`
 - Bootstrap script: `scripts/bootstrap-tfvc-workspace.sh`
 
+## Working directory
+
+Resolve package references relative to the `tfvc-macos` bundle, not the target project. Before changing directory, start in the bundle directory and set:
+
+```zsh
+export TFVC_WRAPPER_PATH="$PWD/scripts/tfvc-wrapper.sh"
+```
+
+Use this absolute path after entering the mapped workspace; bootstrap does not copy scripts there.
+
 ## Provision flow
 
 1. Export user-provided values:
@@ -44,6 +54,8 @@ export TFVC_PASSWORD="<azure-devops-password-or-pat>"
 chmod +x ./scripts/tfvc-wrapper.sh ./scripts/bootstrap-tfvc-workspace.sh
 ```
 
+Before running bootstrap, validate that `TFVC_SERVER_PATH` begins with `$/` and inspect the existing workspace mappings using the wrapper’s `workfold` command. Reuse an existing matching mapping; if the mapping differs, stop and request explicit authorization before replacing it. Bootstrap does not enforce these checks itself.
+
 3. Create/reuse workspace, map, and fetch latest:
 
 ```zsh
@@ -54,8 +66,8 @@ chmod +x ./scripts/tfvc-wrapper.sh ./scripts/bootstrap-tfvc-workspace.sh
 
 ```zsh
 cd "$TFVC_MAPPED_DIR"
-../scripts/tfvc-wrapper.sh workfold -collection:"$TFVC_COLLECTION_URL" -workspace:"$TFVC_WORKSPACE_NAME"
-../scripts/tfvc-wrapper.sh status . -recursive
+"$TFVC_WRAPPER_PATH" workfold -collection:"$TFVC_COLLECTION_URL" -workspace:"$TFVC_WORKSPACE_NAME"
+"$TFVC_WRAPPER_PATH" status . -recursive
 ```
 
 ## Guardrails

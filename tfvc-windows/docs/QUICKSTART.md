@@ -16,7 +16,14 @@ Open **Team Explorer > Home > Pending Changes** (Ctrl+0, P). Review **Included C
 
 ## Publish from pitcrew-dcwp
 
-Use this workflow to copy merged changes from the Git mirror into the mapped TFVC workspace. Run these commands from **Git Bash**. Stop the local stack first so temporary overlays are reverted.
+This section is specific to the separate `pitcrew-dcwp` Git mirror; its `publish:*` npm scripts are not included in this starter pack. Confirm that checkout provides these scripts and follow its setup instructions before continuing. Use this workflow to copy merged changes from the Git mirror into the mapped TFVC workspace. Run these commands from **Git Bash**. Stop the local stack first so temporary overlays are reverted.
+
+Replace the example paths with your local paths. Before step 1, set the wrapper location and enter the mapped TFVC workspace:
+
+```bash
+export TFVC_TOOLS="/c/path/to/nyc-ai-devtools/tfvc-windows/scripts"
+cd "/c/path/to/tfvc-workspace/DEV-OTI"
+```
 
 Publishing sends only the files changed in git between the `synced-to-tfvc` tag (the last commit checked in to TFVC) and `origin/main`, using their committed content. Build output, caches, and uncommitted edits are never copied, and you don't need to have `main` checked out.
 
@@ -25,7 +32,7 @@ Publishing sends only the files changed in git between the `synced-to-tfvc` tag 
 2. From the mirror repository, preview the publish:
 
    ```bash
-   cd /c/Users/[path to repo base]/pitcrew-dcwp
+   cd "/c/path/to/pitcrew-dcwp"
    npm run publish:dry-run
    ```
 
@@ -45,21 +52,21 @@ Publishing sends only the files changed in git between the `synced-to-tfvc` tag 
 4. Pend new and deleted files, then review:
 
    ```bash
-   export TFVC_TOOLS=/c/Users/[path to repo]/nyc-ai-devtools/tfvc-windows/scripts
-   cd /c/Users/[path to tfvc workspace]/DEV-OTI
+   cd "/c/path/to/tfvc-workspace/DEV-OTI"
    bash "$TFVC_TOOLS/tfvc.sh" add "<path from publish:apply>"
+   bash "$TFVC_TOOLS/tfvc.sh" delete "<deleted path from publish:apply>"
    bash "$TFVC_TOOLS/tfvc.sh" status . /recursive
    ```
 
-   The pending changes should match the files from step 2 that weren't `already`. In **Team Explorer > Pending Changes**, don't promote other detected files.
+   Run `add` and `delete` only for the corresponding paths reported by `publish:apply`; skip either command when there are no such files. The pending changes should match the files from step 2 that weren't `already`. In **Team Explorer > Pending Changes**, don't promote other detected files.
 
 5. Enter the comment (one sentence per change, PR numbers in parentheses, for example `Add Click-to-Cancel submit timeout handling and timeout error page (PR #132).`) and select **Check In**.
 
-6. Record the check-in so the next publish starts from it:
+6. Record the check-in so the next publish starts from it. Replace `<changeset-number>` with the actual changeset number:
 
    ```bash
-   cd /c/Users/[path to repo base]/pitcrew-dcwp
-   npm run publish:mark-synced -- <changeset number>
+   cd "/c/path/to/pitcrew-dcwp"
+   npm run publish:mark-synced -- "<changeset-number>"
    ```
 
    This moves the `synced-to-tfvc` tag to the commit you published and pushes it, so everyone's next publish uses the same starting point.

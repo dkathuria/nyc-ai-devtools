@@ -24,10 +24,14 @@ Use an existing workspace if it already maps the required server path. Avoid cre
 When using PowerShell, set the path to this starter pack's wrapper once. Replace the example with the location where you cloned `nyc-ai-devtools`:
 
 ```powershell
-$env:TFVC_TF_PATH = 'C:\Path\To\Visual Studio\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\tf.exe'
+$TfvcScript = 'C:\Path\To\nyc-ai-devtools\tfvc-windows\scripts\tfvc.ps1'
 ```
 
-The wrapper looks for `tf.exe` on `PATH` and in the latest Visual Studio installation via `vswhere`. Set `TFVC_TF_PATH` only if automatic discovery fails.
+The wrapper looks for `tf.exe` on `PATH` and in the latest Visual Studio installation via `vswhere`. Set `TFVC_TF_PATH` only if automatic discovery fails:
+
+```powershell
+$env:TFVC_TF_PATH = 'C:\Path\To\Visual Studio\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\tf.exe'
+```
 
 Run a command from inside a mapped TFVC workspace:
 
@@ -55,7 +59,7 @@ $BootstrapScript = Join-Path (Split-Path -Parent $TfvcScript) 'bootstrap-tfvc-wo
   -RootDir "$HOME\source\tfvc-workspace"
 ```
 
-The script uses Visual Studio's `tf.exe`; it does not accept or save credentials. Sign in through Visual Studio if prompted.
+The mapped folder is `RootDir\WorkspaceName` (in this example, `$HOME\source\tfvc-workspace\TFVC-Windows`). The script uses Visual Studio's `tf.exe`; it does not accept or save credentials. Sign in through Visual Studio if prompted.
 
 ## Git Bash
 
@@ -79,7 +83,7 @@ bash "$TFVC_TOOLS/bootstrap-tfvc-workspace.sh" \
   -RootDir "$(cygpath -w "$HOME/tfvc-workspace")"
 ```
 
-The Git Bash launchers require `powershell.exe` and `cygpath`, both provided on a standard Git for Windows installation. Use Visual Studio or PowerShell for authentication prompts.
+The Git Bash launchers require Windows PowerShell (`powershell.exe`, supplied by Windows) and `cygpath` (supplied by Git for Windows), available on `PATH`. Use Visual Studio or PowerShell for authentication prompts.
 
 ## Daily workflow
 

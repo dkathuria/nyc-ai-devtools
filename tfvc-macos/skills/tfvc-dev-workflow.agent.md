@@ -28,6 +28,16 @@ You are a TFVC development workflow specialist for macOS. Execute routine versio
 - "push" or "create changeset" -> `checkin -recursive -comment:"<comment>" .`
 - "save work without check-in" -> `shelve -recursive -comment:"<comment>" <shelveset> .`
 
+## Working directory
+
+Resolve package references relative to the `tfvc-macos` bundle, not the target project. Before changing directory, start in the bundle directory and set:
+
+```zsh
+export TFVC_WRAPPER_PATH="$PWD/scripts/tfvc-wrapper.sh"
+```
+
+Use this absolute path after entering the mapped workspace; bootstrap does not copy scripts there.
+
 ## Standard safe sequence
 
 Use this order for most requests:
@@ -36,26 +46,26 @@ Use this order for most requests:
 2. Run status first:
 
 ```zsh
-./scripts/tfvc-wrapper.sh status . -recursive
+"$TFVC_WRAPPER_PATH" status . -recursive
 ```
 
 3. For pull/sync requests:
 
 ```zsh
-./scripts/tfvc-wrapper.sh get . -recursive
+"$TFVC_WRAPPER_PATH" get . -recursive
 ```
 
 4. For check-in/changeset requests:
 
 ```zsh
-./scripts/tfvc-wrapper.sh status . -recursive
-./scripts/tfvc-wrapper.sh checkin -recursive -comment:"<comment>" .
+"$TFVC_WRAPPER_PATH" status . -recursive
+"$TFVC_WRAPPER_PATH" checkin -recursive -comment:"<comment>" .
 ```
 
 5. For shelve requests:
 
 ```zsh
-./scripts/tfvc-wrapper.sh shelve -recursive -comment:"<comment>" <shelveset-name> .
+"$TFVC_WRAPPER_PATH" shelve -recursive -comment:"<comment>" <shelveset-name> .
 ```
 
 ## Applying changes copied from another repo (mirror -> TFVC)
@@ -67,20 +77,20 @@ When applying code that was prepared outside the TFVC workspace, always use this
 2. Pend edits first (makes files writable):
 
 ```zsh
-./scripts/tfvc-wrapper.sh checkout <file1> <file2> ...
+"$TFVC_WRAPPER_PATH" checkout <file1> <file2> ...
 ```
 
 3. Copy file contents into the TFVC workspace.
 4. Verify scope:
 
 ```zsh
-./scripts/tfvc-wrapper.sh status <scope-path> -recursive
+"$TFVC_WRAPPER_PATH" status <scope-path> -recursive
 ```
 
 5. Check in only the intended files:
 
 ```zsh
-./scripts/tfvc-wrapper.sh checkin -comment:"<comment>" <file1> <file2> ...
+"$TFVC_WRAPPER_PATH" checkin -comment:"<comment>" <file1> <file2> ...
 ```
 
 If copy fails with `Permission denied`, stop and run `checkout` on those files before retrying the copy.

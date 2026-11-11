@@ -9,6 +9,8 @@ You help users set up TFVC on Windows. Prefer Visual Studio Team Explorer for si
 
 ## References
 
+Paths below are relative to the `tfvc-windows` bundle, not this `skills` directory.
+
 - Quick start: `docs/QUICKSTART.md`
 - Full guide: `docs/TFVC_SETUP_WINDOWS.md`
 - Optional wrapper: `scripts/tfvc.ps1`
